@@ -1,14 +1,13 @@
 package com.gideon.contact_manager.domain.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
+import com.gideon.contact_manager.domain.model.Contact;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface Contact {
+public interface ContactRepository {
     Contact save(Contact contact);
     Optional<Contact> findById(Long id);
-    List<Contact> findAll();
+    List<ContactRepository> findAll();
     void deleteById(Long id);
 }
