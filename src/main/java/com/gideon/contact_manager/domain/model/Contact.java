@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
-@Table(name = "contacts")
+@Table(name = "phone_contacts")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,5 +42,6 @@ public class Contact {
     private String address;
 
     @Enumerated(EnumType.STRING)
-    private ContactGroup group;
+    @Column(name = "contact_group")
+    private ContactGroup contactGroup;
 }

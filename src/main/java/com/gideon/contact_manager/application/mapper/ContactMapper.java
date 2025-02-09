@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface ContactMapper {
-    ContactMapper INSTANCE = Mappers.getMapper(ContactMapper.class);
+//    ContactMapper INSTANCE = Mappers.getMapper(ContactMapper.class);
 
     UserResponse toDTO(Contact contact);
     Contact toEntity(UserResponse contactDTO);
