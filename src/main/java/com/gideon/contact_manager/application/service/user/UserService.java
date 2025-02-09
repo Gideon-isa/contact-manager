@@ -1,6 +1,6 @@
 package com.gideon.contact_manager.application.service.user;
 
-import com.gideon.contact_manager.application.dto.CreateUserRequest;
+import com.gideon.contact_manager.presentation.apimodels.CreateUserRequest;
 import com.gideon.contact_manager.application.dto.UserResponse;
 
 import java.util.List;
