@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface ContactRepository {
     Contact save(Contact contact);
     Optional<Contact> findById(Long id);
-    List<ContactRepository> findAll();
+    List<Contact> findAll();
     void deleteById(Long id);
 }
