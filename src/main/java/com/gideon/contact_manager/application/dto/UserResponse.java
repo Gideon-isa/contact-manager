@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 public class UserResponse {
-    private String firstName;
-    private String lastName;
-    private String email;
+    public Long id;
+    public String firstName;
+    public String lastName;
+    public String email;
 //    private String phoneNumber;
 //    private String imageUrl;
 //    private String address;

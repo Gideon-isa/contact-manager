@@ -1,7 +1,9 @@
 package com.gideon.contact_manager.domain.Primitives;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -15,6 +17,7 @@ import java.util.Date;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public abstract class AuditableEntity {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
