@@ -5,6 +5,7 @@ import com.gideon.contact_manager.application.dto.UserResponse;
 import com.gideon.contact_manager.presentation.apimodels.LoginRequest;
 import com.gideon.contact_manager.presentation.apimodels.UpdateUserRequest;
 import com.gideon.contact_manager.shared.BaseResponse;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,5 +17,7 @@ public interface UserService {
     BaseResponse<UserResponse> updateUser(Long id, UpdateUserRequest updateUserRequest);
     BaseResponse<List<UserResponse>> GetAllUsers();
     BaseResponse<UserResponse> deleteUser(Long id);
+    UserDetailsService userDetailService();
+
 
 }

@@ -17,31 +17,29 @@ public class Contact {
     private Long id;
 
     @NotBlank(message = "first name cannot be blank")
-    @NonNull
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String firstName;
 
     @NotBlank(message = "last name cannot be blank")
-    @NonNull
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String lastName;
 
     @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank(message = "phone number cannot be blank")
-    @NonNull
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
-    private String imageUrl;
+    private String contactImage;
 
     @NotBlank(message = "address cannot be blank")
-    @NonNull
     @Column(nullable = false, unique = true)
     private String address;
 
+    private Boolean isFavourite;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "contact_group")
+    @Column(name = "contact_group", nullable = false)
     private ContactGroup contactGroup;
 }
