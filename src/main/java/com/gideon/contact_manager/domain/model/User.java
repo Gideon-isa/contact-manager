@@ -57,6 +57,8 @@ public class User extends AuditableEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private Contact contact;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

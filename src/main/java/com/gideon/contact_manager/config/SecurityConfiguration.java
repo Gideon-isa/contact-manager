@@ -28,11 +28,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/user/**").permitAll()
-                        .requestMatchers("/api/admin").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/user").hasAuthority(Role.USER.name())
-                        .anyRequest().authenticated())
+//                .authorizeHttpRequests(request -> request
+//                        .requestMatchers("/api/user/**").permitAll()
+//                        .requestMatchers("/api/admin").hasAnyAuthority(Role.ADMIN.name())
+//                        .requestMatchers("/api/user").hasAuthority(Role.USER.name())
+//                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

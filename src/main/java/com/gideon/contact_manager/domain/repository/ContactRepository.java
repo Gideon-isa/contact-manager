@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ContactRepository {
-    Contact save(Contact contact);
-    Optional<Contact> findById(Long id);
-    List<Contact> findAll();
-    void deleteById(Long id);
+//    Contact save(Contact contact);
+//    Optional<Contact> findById(Long id);
+//    List<Contact> findAll();
+//    void deleteById(Long id);
 }
