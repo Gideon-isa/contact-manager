@@ -16,6 +16,9 @@ import com.gideon.contact_manager.shared.Error;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -152,5 +155,21 @@ public class UserServiceImpl implements UserService {
         return BaseResponse.failure(new UserResponse(),
                 new Error("404", "user does not exist in the system"),
                 HttpStatus.NO_CONTENT.value(), "User does not exist");
+    }
+
+//    @Override
+//    public UserDetailsService userDetailService() {
+//        return null;
+//    }
+
+    @Override
+    public UserDetailsService userDetailService() {
+
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return jpaUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            }
+        };
     }
 }
