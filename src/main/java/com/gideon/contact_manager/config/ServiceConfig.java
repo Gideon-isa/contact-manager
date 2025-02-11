@@ -2,6 +2,7 @@ package com.gideon.contact_manager.config;
 
 import com.gideon.contact_manager.application.usecase.user.PasswordServiceImpl;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,10 @@ public class ServiceConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI();
+        return new OpenAPI().info(new Info()
+                .title("Phone Book API")
+                .description("An API that manage contacts")
+                .version("v1.0"));
     }
 
     @Bean
