@@ -1,15 +1,19 @@
 package com.gideon.contact_manager.application.usecase.contact;
 
 import com.gideon.contact_manager.application.dto.ContactResponse;
+import com.gideon.contact_manager.application.dto.UserResponse;
 import com.gideon.contact_manager.application.features.contact.commands.CreateContactCommand;
+import com.gideon.contact_manager.application.features.contact.commands.ImportContactCommand;
+import com.gideon.contact_manager.application.features.contact.commands.UpdateContactCommand;
 import com.gideon.contact_manager.application.mapper.ContactMapper;
-import com.gideon.contact_manager.application.mapper.UserMapper;
 import com.gideon.contact_manager.application.service.contact.ContactService;
 import com.gideon.contact_manager.domain.model.Contact;
-import com.gideon.contact_manager.domain.repository.ContactRepository;
+import com.gideon.contact_manager.domain.model.User;
+import com.gideon.contact_manager.infrastructure.persistence.ContactSpecificationSearch;
 import com.gideon.contact_manager.infrastructure.persistence.JpaContactRepository;
-import com.gideon.contact_manager.presentation.apimodels.CreateContactRequest;
-import com.gideon.contact_manager.presentation.apimodels.ImportContactRequest;
+import com.gideon.contact_manager.presentation.apimodels.contact.CreateContactRequest;
+import com.gideon.contact_manager.presentation.apimodels.contact.ImportContactRequest;
+import com.gideon.contact_manager.presentation.apimodels.contact.UpdateContactRequest;
 import com.gideon.contact_manager.shared.BaseResponse;
 import com.gideon.contact_manager.shared.Error;
 import com.opencsv.CSVWriter;
@@ -24,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,17 +39,96 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public BaseResponse<ContactResponse> createContact(CreateContactRequest request) {
-        return null;
+        String imagePath = SaveContactImage.saveContactImage(request.getContactImage());
+        CreateContactCommand cmd = CreateContactCommand
+                .builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .contactImage(imagePath)
+                .physicalAddress(request.getAddress())
+                .isFavourite(request.isFavourite())
+                .group(request.getGroup().toString())
+                .createdOn(Date.from(Instant.now()))
+                .createdBy(request.getFirstName())
+                .build();
+
+        Contact newContact = contactMapper.toEntity(cmd);
+        jpaContactRepository.save(newContact);
+        ContactResponse contactDto = contactMapper.toDTO(newContact);
+        return BaseResponse.
+                success(contactDto, HttpStatus.CREATED.value(),
+                        "contact created successfully");
+
     }
 
     @Override
-    public BaseResponse<ContactResponse> updateContact(CreateContactRequest request) {
-        return null;
+    public BaseResponse<ContactResponse> updateContact(Long id, UpdateContactRequest request) {
+         Optional<Contact> contact =  jpaContactRepository.findById(id);
+         if(contact.isPresent()) {
+             String imagePath = SaveContactImage.saveContactImage(request.getContactImage());
+             Contact toUpdateContact = contact.get();
+
+             toUpdateContact.setFirstName(request.getFirstName());
+             toUpdateContact.setLastName(request.getLastName());
+             toUpdateContact.setEmail(request.getEmail());
+             toUpdateContact.setPhoneNumber(request.getPhoneNumber());
+             toUpdateContact.setContactImage(imagePath);
+             toUpdateContact.setAddress(request.getAddress());
+             toUpdateContact.setIsFavourite(request.getIsFavourite());
+             toUpdateContact.setContactGroup(request.getGroup());
+             toUpdateContact.setModifiedOn(Date.from(Instant.now()));
+             toUpdateContact.setModifiedBy(request.getFirstName());
+
+             jpaContactRepository.save(toUpdateContact);
+             ContactResponse contactDto = contactMapper.toDTO(toUpdateContact);
+             return BaseResponse.
+                     success(contactDto, HttpStatus.CREATED.value(),
+                             "contact updated successfully");
+         }
+        return BaseResponse.failure(new ContactResponse(),
+                new Error("500", "Error updating the contact"),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Error updating the contact");
     }
 
     @Override
-    public BaseResponse<ContactResponse> deleteContact(CreateContactRequest request) {
-        return null;
+    public BaseResponse<ContactResponse> getContact(Long id) {
+        Optional<Contact> contact = jpaContactRepository.findById(id);
+        if(contact.isPresent()) {
+            ContactResponse contactDto = contact.map(contactMapper::toDTO).orElse(null);
+            return BaseResponse.success(contactDto, HttpStatus.OK.value(), "User found");
+        }
+        return BaseResponse.failure(new ContactResponse(),
+                new Error("404", "No user of such exist in the application"),
+                HttpStatus.NO_CONTENT.value(), "User does not exist");
+    }
+
+    @Override
+    public BaseResponse<ContactResponse> deleteContact(Long id) {
+        var contact = getContact(id);
+        if(contact.getData() != null) {
+            jpaContactRepository.deleteById(id);
+            return BaseResponse.success(contact.getData(), HttpStatus.OK.value(),
+                    String.format("user with id %d has been deleted", contact.getData().id));
+        };
+        return BaseResponse.failure(new ContactResponse(),
+                new Error("404", "user does not exist in the system"),
+                HttpStatus.NO_CONTENT.value(), "User does not exist");
+    }
+
+    @Override
+    public BaseResponse<ContactResponse> deleteMultipleContacts(List<Long> ids) {
+        try {
+            jpaContactRepository.deleteAllById(ids);
+            return BaseResponse.success(new ContactResponse(), HttpStatus.OK.value(),
+                    "selected user deleted successfully");
+        } catch (RuntimeException e) {
+            return BaseResponse.failure(new ContactResponse(),
+                    new Error("404", e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "error deleting");
+        }
     }
 
     @Override
@@ -63,9 +143,9 @@ public class ContactServiceImpl implements ContactService {
                         .lastName(createRequest.getLastName())
                         .email(createRequest.getEmail())
                         .phoneNumber(createRequest.getPhoneNumber())
-                        .contactImage(createRequest.getContactImage())
+                        .contactImage(createRequest.getContactImage().toString())
                         .physicalAddress(createRequest.getAddress())
-//                        .group(String.valueOf(createRequest.getGroup()))
+                        .group(String.valueOf(createRequest.getGroup()))
                         .createdOn(Date.from(Instant.now()))
                         .createdBy(createRequest.getFirstName())
                         .build();
@@ -112,7 +192,6 @@ public class ContactServiceImpl implements ContactService {
             // Write CSV header
             String[] header = {"first Name", "last name", "email", "phone number", "address"};
             csvWriter.writeNext(header);
-
             // Fetch data
             List<Contact> contacts = jpaContactRepository.findAll();
 
@@ -134,7 +213,17 @@ public class ContactServiceImpl implements ContactService {
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     "Error during export");
         }
+    }
 
+    @Override
+    public BaseResponse<List<ContactResponse>> searchContact(String searchTerm) {
 
+        List<ContactResponse> contactList = jpaContactRepository
+                .findAll(ContactSpecificationSearch.searchContacts(searchTerm))
+                .stream()
+                .map(contactMapper::toDTO)
+                .toList();
+        int totalUsers = contactList.size();
+        return BaseResponse.success(contactList, HttpStatus.OK.value(), String.format("returned %d user", totalUsers));
     }
 }

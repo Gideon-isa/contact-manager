@@ -16,6 +16,7 @@ public class UpdateUserCommand {
     private String firstName;
     private String lastName;
     private String email;
+    private String phone;
     private String address;
     private Date createdOn;
     private String createdBy;

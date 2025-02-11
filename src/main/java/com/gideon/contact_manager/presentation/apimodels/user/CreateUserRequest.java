@@ -1,4 +1,4 @@
-package com.gideon.contact_manager.presentation.apimodels;
+package com.gideon.contact_manager.presentation.apimodels.user;
 
 import com.gideon.contact_manager.presentation.validations.PasswordMatches;
 import jakarta.validation.constraints.Email;
@@ -23,6 +23,10 @@ public class CreateUserRequest {
     @NotNull(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
+
+    @NotNull(message = "Phone number cannot be null")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
+    private String phoneNumber;
 
     @NotNull(message = "Password is required")
     @Size(min = 6, message = "minimum of 6 character is required")

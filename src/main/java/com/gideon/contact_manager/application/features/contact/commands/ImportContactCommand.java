@@ -10,14 +10,13 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class CreateContactCommand {
+public class ImportContactCommand {
     public String firstName;
     public String lastName;
     public String email;
     public String phoneNumber;
     public String contactImage;
     public String physicalAddress;
-    public Boolean isFavourite;
     public String group;
     private Date createdOn;
     private String createdBy;

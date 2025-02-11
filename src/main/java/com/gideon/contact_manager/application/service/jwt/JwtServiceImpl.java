@@ -1,5 +1,6 @@
 package com.gideon.contact_manager.application.service.jwt;
 
+import com.gideon.contact_manager.domain.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -20,9 +21,9 @@ public class JwtServiceImpl {
     @Value("${app.jwt.secret-key}")
     private String secretKey;
 
-    private String generateToken(UserDetails userDetails) {
+    private String generateToken(User user) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey())
