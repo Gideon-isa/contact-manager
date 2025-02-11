@@ -1,4 +1,4 @@
-package com.gideon.contact_manager.presentation.apimodels;
+package com.gideon.contact_manager.presentation.apimodels.contact;
 
 import com.gideon.contact_manager.domain.model.ContactGroup;
 import jakarta.validation.constraints.Email;
@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.SecondaryRow;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -30,13 +30,14 @@ public class CreateContactRequest {
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phoneNumber;
 
-    //To add Contact image
-    private String contactImage;
+    private MultipartFile contactImage;
 
     @NotNull(message = "Address cannot be null")
     @Size(min = 5, max = 100, message = "Address must be between 5 and 100 characters")
     private String address;
 
     private ContactGroup Group;
+
+    private boolean isFavourite;
 
 }

@@ -23,7 +23,7 @@ import java.util.List;
 public class User extends AuditableEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "first name cannot be blank")
@@ -41,11 +41,18 @@ public class User extends AuditableEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "phone number cannot be blank")
+    @Column(nullable = true, unique = true)
+    private String phoneNumber;
+
+    @Enumerated(value = EnumType.STRING)
+    Role role;
+
     @Column(name = "user_address", nullable = true)
     private String Address;
 
     @Column(nullable = true, unique = true)
-    private String passwordHash;
+    private String password;
 
     @Column(name = "user_otp", nullable = true)
     private String Otp;
@@ -53,11 +60,8 @@ public class User extends AuditableEntity implements UserDetails {
     @Column(nullable = true, unique = true)
     private Boolean IsEmailConfirmed;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    private Contact contact;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contact> contacts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

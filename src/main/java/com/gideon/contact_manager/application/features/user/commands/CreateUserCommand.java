@@ -13,6 +13,7 @@ public class CreateUserCommand {
     private String firstName;
     private String lastName;
     private String email;
+    private String phoneNumber;
     private String passwordHash;
     private Date createdOn;
     private String createdBy;

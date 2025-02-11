@@ -2,6 +2,7 @@ package com.gideon.contact_manager.config;
 
 import com.gideon.contact_manager.application.service.jwt.JwtService;
 import com.gideon.contact_manager.application.service.user.UserService;
+import com.gideon.contact_manager.application.usecase.user.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtService jwtService;
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Override
     protected void doFilterInternal(
@@ -36,27 +37,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userEmail;
-        if(authHeader == null || !authHeader.startsWith("Bearer")) {
+        final String userName;
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
         // accessing the token after "Bearer"
         jwt = authHeader.substring(7);
         //extracting the user's email
-        userEmail =jwtService.extractUserName(jwt);
+        userName = jwtService.extractUserName(jwt);
 
-        if(StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication()== null) {
-            UserDetails userDetails = userService.userDetailService().loadUserByUsername(userEmail);
+        if(StringUtils.isNotEmpty(userName) && SecurityContextHolder.getContext().getAuthentication()== null) {
+            UserDetails userDetails = userService.loadUserByUsername(userName);
 
             if(jwtService.isTokenValid(jwt, userDetails)) {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-
                 UsernamePasswordAuthenticationToken token =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
 
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(token);
             }
         }
         filterChain.doFilter(request, response);

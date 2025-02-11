@@ -1,15 +1,14 @@
 package com.gideon.contact_manager.presentation.controllers;
 
-import com.gideon.contact_manager.presentation.apimodels.CreateUserRequest;
+import com.gideon.contact_manager.presentation.apimodels.user.CreateUserRequest;
 import com.gideon.contact_manager.application.dto.UserResponse;
 import com.gideon.contact_manager.application.service.user.UserService;
-import com.gideon.contact_manager.presentation.apimodels.LoginRequest;
-import com.gideon.contact_manager.presentation.apimodels.UpdateUserRequest;
+import com.gideon.contact_manager.presentation.apimodels.user.LoginRequest;
+import com.gideon.contact_manager.presentation.apimodels.user.UpdateUserRequest;
 import com.gideon.contact_manager.shared.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/sign-up")
+    @PostMapping("/")
     public ResponseEntity<BaseResponse<UserResponse>> createUser(@Valid @RequestBody CreateUserRequest request) {
         log.info("creating an new user with email: {}", request.getEmail());
         var response = userService.createUser(request);
@@ -29,7 +28,7 @@ public class UserController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth")
     public ResponseEntity<BaseResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request) {
         log.info("logging user with email in: {}", request.getEmail());
         var response = userService.login(request);
