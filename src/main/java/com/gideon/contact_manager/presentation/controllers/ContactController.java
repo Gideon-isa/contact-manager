@@ -35,7 +35,7 @@ public class ContactController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<ContactResponse>> updateContact (@PathVariable Long id,
            @RequestPart("request") @Valid UpdateContactRequest request,
            @RequestPart(value = "contactImage", required = false) MultipartFile contactImage) {
