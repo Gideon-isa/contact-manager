@@ -35,9 +35,12 @@ public class ContactController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<ContactResponse>> updateContact (@PathVariable Long id,
-            @ModelAttribute UpdateContactRequest request) {
+           @RequestPart("request") @Valid UpdateContactRequest request,
+           @RequestPart(value = "contactImage", required = false) MultipartFile contactImage) {
+
+        request.setContactImage(contactImage);
         var response = contactService.updateContact(id,request);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
