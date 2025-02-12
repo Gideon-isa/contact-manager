@@ -18,8 +18,8 @@ public class CreateContactRequest {
     @Size(min = 2, message = "First name must have at least 2 characters")
     private String firstName;
 
-    @NotNull(message = "First name cannot be null")
-    @Size(min = 2, message = "First name must have at least 2 characters")
+    @NotNull(message = "Last name cannot be null")
+    @Size(min = 2, message = "Last name must have at least 2 characters")
     private String lastName;
 
     @NotNull(message = "Email is required")
@@ -36,8 +36,8 @@ public class CreateContactRequest {
     @Size(min = 5, max = 100, message = "Address must be between 5 and 100 characters")
     private String address;
 
-    private ContactGroup Group;
+    private ContactGroup group;
 
-    private boolean isFavourite;
+    private Boolean isFavourite;
 
 }

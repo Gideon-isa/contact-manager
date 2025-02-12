@@ -7,10 +7,13 @@ import com.gideon.contact_manager.presentation.apimodels.contact.ImportContactRe
 import com.gideon.contact_manager.presentation.apimodels.contact.UpdateContactRequest;
 import com.gideon.contact_manager.shared.BaseResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +25,12 @@ import java.util.List;
 public class ContactController {
     private final ContactService contactService;
 
-    @PostMapping(value = "/", consumes = {"multipart/form-data"})
-    public ResponseEntity<BaseResponse<ContactResponse>> createContact(@ModelAttribute CreateContactRequest request) {
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<ContactResponse>> createContact(
+            @RequestPart("request") @Valid CreateContactRequest request,
+            @RequestPart(value = "contactImage", required = false) MultipartFile contactImage) {
+
+        request.setContactImage(contactImage);
         var response = contactService.createContact(request);
         return ResponseEntity.status(response.getStatus()).body(response);
     }

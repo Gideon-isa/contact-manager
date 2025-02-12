@@ -48,8 +48,8 @@ public class ContactServiceImpl implements ContactService {
                 .phoneNumber(request.getPhoneNumber())
                 .contactImage(imagePath)
                 .physicalAddress(request.getAddress())
-                .isFavourite(request.isFavourite())
-                .group(request.getGroup().toString())
+                .isFavourite(request.getIsFavourite())
+                .group(request.getGroup() != null ? request.getGroup() : null)
                 .createdOn(Date.from(Instant.now()))
                 .createdBy(request.getFirstName())
                 .build();
@@ -145,7 +145,7 @@ public class ContactServiceImpl implements ContactService {
                         .phoneNumber(createRequest.getPhoneNumber())
                         .contactImage(createRequest.getContactImage().toString())
                         .physicalAddress(createRequest.getAddress())
-                        .group(String.valueOf(createRequest.getGroup()))
+                        .group(createRequest.getGroup())
                         .createdOn(Date.from(Instant.now()))
                         .createdBy(createRequest.getFirstName())
                         .build();
