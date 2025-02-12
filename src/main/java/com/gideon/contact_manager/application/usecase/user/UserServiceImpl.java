@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .passwordHash(passwordHash)
+                .phoneNumber(request.getPhoneNumber())
                 .createdBy(request.getFirstName())
                 .createdOn(Date.from(Instant.now()))
                 .build();
